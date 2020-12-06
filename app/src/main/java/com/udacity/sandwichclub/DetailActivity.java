@@ -2,13 +2,16 @@ package com.udacity.sandwichclub;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.squareup.picasso.Picasso;
 import com.udacity.sandwichclub.model.Sandwich;
 import com.udacity.sandwichclub.utils.JsonUtils;
+
+import org.json.JSONException;
 
 public class DetailActivity extends AppCompatActivity {
 
@@ -29,18 +32,21 @@ public class DetailActivity extends AppCompatActivity {
 
         int position = intent.getIntExtra(EXTRA_POSITION, DEFAULT_POSITION);
         if (position == DEFAULT_POSITION) {
-            // EXTRA_POSITION not found in intent
             closeOnError();
             return;
         }
 
         String[] sandwiches = getResources().getStringArray(R.array.sandwich_details);
         String json = sandwiches[position];
-        Sandwich sandwich = JsonUtils.parseSandwichJson(json);
-        if (sandwich == null) {
-            // Sandwich data unavailable
-            closeOnError();
-            return;
+        Sandwich sandwich = new Sandwich();;
+        try {
+            sandwich = JsonUtils.parseSandwichJson(json);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            if (sandwich == null) {
+                closeOnError();
+                return;
+            }
         }
 
         populateUI();
